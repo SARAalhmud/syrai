@@ -34,4 +34,13 @@ public function jops()
 {
     return $this->hasMany(jop::class, 'experts_id');
 }
+  public function masej()
+{
+    return $this->hasMany(masej::class, 'experts_id');
+}
+ public function ratingsReceived()
+{
+    return $this->hasMany(RatedPerson::class, 'experts_id');
+}
+
 }

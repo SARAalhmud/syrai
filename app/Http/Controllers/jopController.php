@@ -30,7 +30,7 @@ public function index(Request $request)
         // dd($levels); // لفحص القيم
         $jop->whereIn('jobType', $jobType);
     }
-     if ($request->has('jobCategory')) {
+if ($request->has('jobCategory')) {
         $jobCategory = (array) $request->jobCategory;
         // dd($levels); // لفحص القيم
         $jop->whereIn('jobCategory', $jobCategory);

@@ -26,10 +26,10 @@ async function initializeApp() {
     try {
         // تحميل البيانات
         await loadData();
-        
+
         // تهيئة الصفحة الحالية
         const currentPage = getCurrentPage();
-        
+
         switch(currentPage) {
             case 'index':
                 initializeHomePage();
@@ -41,10 +41,10 @@ async function initializeApp() {
                 initializeDirectoryPage();
                 break;
         }
-        
+
         // تهيئة الأحداث العامة
         initializeGlobalEvents();
-        
+
     } catch (error) {
         console.error('خطأ في تهيئة التطبيق:', error);
         showErrorMessage('عذراً، حدث خطأ في تحميل البيانات');
@@ -67,13 +67,13 @@ async function loadData() {
         if (membersResponse.ok) {
             allMembers = await membersResponse.json();
         }
-        
+
         // تحميل بيانات الشركات
         const companiesResponse = await fetch(CONFIG.apiEndpoints.companies);
         if (companiesResponse.ok) {
             allCompanies = await companiesResponse.json();
         }
-        
+
         console.log('تم تحميل البيانات بنجاح');
     } catch (error) {
         console.warn('لم يتم العثور على ملفات البيانات، سيتم استخدام البيانات الافتراضية');
@@ -158,7 +158,7 @@ function loadDefaultData() {
             avatar: "ع س"
         }
     ];
-    
+
     // بيانات افتراضية للشركات
     allCompanies = [
         {
@@ -240,13 +240,13 @@ function loadDefaultData() {
 function initializeHomePage() {
     // تحديث الإحصائيات
     animateStats();
-    
+
     // عرض الخبراء المميزين
     displayFeaturedExperts();
-    
+
     // عرض الشركات المميزة
     displayFeaturedCompanies();
-    
+
     // تهيئة البحث في الصفحة الرئيسية
     initializeHeroSearch();
 }
@@ -254,12 +254,12 @@ function initializeHomePage() {
 // تحريك الإحصائيات
 function animateStats() {
     const statNumbers = document.querySelectorAll('.stat-number');
-    
+
     statNumbers.forEach(stat => {
         const target = parseInt(stat.getAttribute('data-target'));
         const increment = target / 100;
         let current = 0;
-        
+
         const timer = setInterval(() => {
             current += increment;
             if (current >= target) {
@@ -275,9 +275,9 @@ function animateStats() {
 function displayFeaturedExperts() {
     const container = document.getElementById('featuredExperts');
     if (!container) return;
-    
+
     const featured = allMembers.slice(0, 3);
-    
+
     container.innerHTML = featured.map(expert => `
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="expert-card">
@@ -296,7 +296,7 @@ function displayFeaturedExperts() {
                         <span class="ms-2">${expert.rating}</span>
                     </div>
                     <div class="skills mb-3">
-                        ${expert.skills.slice(0, 3).map(skill => 
+                        ${expert.skills.slice(0, 3).map(skill =>
                             `<span class="skill-tag">${skill}</span>`
                         ).join('')}
                     </div>
@@ -314,9 +314,9 @@ function displayFeaturedExperts() {
 function displayFeaturedCompanies() {
     const container = document.getElementById('featuredCompanies');
     if (!container) return;
-    
+
     const featured = allCompanies.slice(0, 3);
-    
+
     container.innerHTML = featured.map(company => `
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="company-card">
@@ -365,13 +365,13 @@ function initializeDirectoryPage() {
 function displayProfiles(page = 1) {
     const container = document.getElementById('profilesContainer');
     const resultsCount = document.getElementById('resultsCount');
-    
+
     if (!container) return;
-    
+
     const startIndex = (page - 1) * CONFIG.itemsPerPage;
     const endIndex = startIndex + CONFIG.itemsPerPage;
     const pageData = filteredData.slice(startIndex, endIndex);
-    
+
     if (pageData.length === 0) {
         container.innerHTML = `
             <div class="col-12">
@@ -404,16 +404,16 @@ function displayProfiles(page = 1) {
                                 <small class="ms-1">${expert.rating}</small>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <small class="text-muted d-block mb-2">المهارات:</small>
                             <div class="skills">
-                                ${expert.skills.slice(0, 4).map(skill => 
+                                ${expert.skills.slice(0, 4).map(skill =>
                                     `<span class="skill-tag">${skill}</span>`
                                 ).join('')}
                             </div>
                         </div>
-                        
+
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">
                                 <i class="fas fa-briefcase me-1"></i>
@@ -429,12 +429,12 @@ function displayProfiles(page = 1) {
             </div>
         `).join('');
     }
-    
+
     // تحديث عدد النتائج
     if (resultsCount) {
         resultsCount.textContent = filteredData.length;
     }
-    
+
     // تحديث الترقيم
     updatePagination('profilesPagination', filteredData.length, page, displayProfiles);
 }
@@ -443,13 +443,13 @@ function displayProfiles(page = 1) {
 function displayCompanies(page = 1) {
     const container = document.getElementById('companiesContainer');
     const resultsCount = document.getElementById('companyResultsCount');
-    
+
     if (!container) return;
-    
+
     const startIndex = (page - 1) * CONFIG.itemsPerPage;
     const endIndex = startIndex + CONFIG.itemsPerPage;
     const pageData = filteredData.slice(startIndex, endIndex);
-    
+
     if (pageData.length === 0) {
         container.innerHTML = `
             <div class="col-12">
@@ -482,20 +482,20 @@ function displayCompanies(page = 1) {
                                 <small class="ms-1">${company.rating}</small>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <span class="company-size">${getSizeName(company.size)}</span>
                         </div>
-                        
+
                         <div class="mb-3">
                             <small class="text-muted d-block mb-2">الخدمات:</small>
                             <div class="services">
-                                ${company.services.slice(0, 3).map(service => 
+                                ${company.services.slice(0, 3).map(service =>
                                     `<span class="skill-tag">${getServiceName(service)}</span>`
                                 ).join('')}
                             </div>
                         </div>
-                        
+
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">
                                 <i class="fas fa-users me-1"></i>
@@ -511,12 +511,12 @@ function displayCompanies(page = 1) {
             </div>
         `).join('');
     }
-    
+
     // تحديث عدد النتائج
     if (resultsCount) {
         resultsCount.textContent = filteredData.length;
     }
-    
+
     // تحديث الترقيم
     updatePagination('companiesPagination', filteredData.length, page, displayCompanies);
 }
@@ -525,7 +525,7 @@ function displayCompanies(page = 1) {
 function initializeHeroSearch() {
     const searchInput = document.getElementById('heroSearch');
     if (!searchInput) return;
-    
+
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             const query = this.value.trim();
@@ -542,19 +542,19 @@ function initializeProfilesSearch() {
     const searchInput = document.getElementById('profileSearch');
     const searchBtn = document.getElementById('searchBtn');
     const specialtyFilter = document.getElementById('specialtyFilter');
-    
+
     if (searchInput) {
         searchInput.addEventListener('input', debounce(filterProfiles, 300));
     }
-    
+
     if (searchBtn) {
         searchBtn.addEventListener('click', filterProfiles);
     }
-    
+
     if (specialtyFilter) {
         specialtyFilter.addEventListener('change', filterProfiles);
     }
-    
+
     // البحث من URL
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search');
@@ -569,15 +569,15 @@ function initializeCompaniesSearch() {
     const searchInput = document.getElementById('companySearch');
     const searchBtn = document.getElementById('searchCompanyBtn');
     const industryFilter = document.getElementById('industryFilter');
-    
+
     if (searchInput) {
         searchInput.addEventListener('input', debounce(filterCompanies, 300));
     }
-    
+
     if (searchBtn) {
         searchBtn.addEventListener('click', filterCompanies);
     }
-    
+
     if (industryFilter) {
         industryFilter.addEventListener('change', filterCompanies);
     }
@@ -590,24 +590,24 @@ function filterProfiles() {
     const location = document.getElementById('locationFilter')?.value || '';
     const experienceLevels = getCheckedValues('input[name="experience"]:checked');
     const selectedSkills = getActiveSkills();
-    
+
     filteredData = allMembers.filter(member => {
-        const matchesSearch = !searchQuery || 
+        const matchesSearch = !searchQuery ||
             member.name.toLowerCase().includes(searchQuery) ||
             member.title.toLowerCase().includes(searchQuery) ||
             member.skills.some(skill => skill.toLowerCase().includes(searchQuery));
-            
+
         const matchesSpecialty = !specialty || member.specialty === specialty;
         const matchesLocation = !location || member.location === location;
         const matchesExperience = experienceLevels.length === 0 || experienceLevels.includes(member.experience);
-        const matchesSkills = selectedSkills.length === 0 || 
-            selectedSkills.some(skill => member.skills.some(memberSkill => 
+        const matchesSkills = selectedSkills.length === 0 ||
+            selectedSkills.some(skill => member.skills.some(memberSkill =>
                 memberSkill.toLowerCase().includes(skill.toLowerCase())
             ));
-        
+
         return matchesSearch && matchesSpecialty && matchesLocation && matchesExperience && matchesSkills;
     });
-    
+
     displayProfiles(1);
 }
 
@@ -618,20 +618,20 @@ function filterCompanies() {
     const location = document.getElementById('companyLocationFilter')?.value || '';
     const companySizes = getCheckedValues('input[name="companySize"]:checked');
     const selectedServices = getCheckedValues('input[name="services"]:checked');
-    
+
     filteredData = allCompanies.filter(company => {
-        const matchesSearch = !searchQuery || 
+        const matchesSearch = !searchQuery ||
             company.name.toLowerCase().includes(searchQuery);
-            
+
         const matchesIndustry = !industry || company.industry === industry;
         const matchesLocation = !location || company.location === location;
         const matchesSize = companySizes.length === 0 || companySizes.includes(company.size);
-        const matchesServices = selectedServices.length === 0 || 
+        const matchesServices = selectedServices.length === 0 ||
             selectedServices.some(service => company.services.includes(service));
-        
+
         return matchesSearch && matchesIndustry && matchesLocation && matchesSize && matchesServices;
     });
-    
+
     displayCompanies(1);
 }
 
@@ -642,13 +642,13 @@ function initializeProfilesFilters() {
     experienceCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', filterProfiles);
     });
-    
+
     // فلتر الموقع
     const locationFilter = document.getElementById('locationFilter');
     if (locationFilter) {
         locationFilter.addEventListener('change', filterProfiles);
     }
-    
+
     // فلاتر المهارات
     const skillTags = document.querySelectorAll('.skill-tag-filter');
     skillTags.forEach(tag => {
@@ -657,13 +657,13 @@ function initializeProfilesFilters() {
             filterProfiles();
         });
     });
-    
+
     // مسح الفلاتر
     const clearFilters = document.getElementById('clearFilters');
     if (clearFilters) {
         clearFilters.addEventListener('click', clearAllFilters);
     }
-    
+
     // ترتيب النتائج
     const sortRadios = document.querySelectorAll('input[name="sortBy"]');
     sortRadios.forEach(radio => {
@@ -680,25 +680,25 @@ function initializeCompaniesFilters() {
     sizeCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', filterCompanies);
     });
-    
+
     // فلتر الموقع
     const locationFilter = document.getElementById('companyLocationFilter');
     if (locationFilter) {
         locationFilter.addEventListener('change', filterCompanies);
     }
-    
+
     // فلاتر الخدمات
     const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
     serviceCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', filterCompanies);
     });
-    
+
     // مسح الفلاتر
     const clearFilters = document.getElementById('clearCompanyFilters');
     if (clearFilters) {
         clearFilters.addEventListener('click', clearAllCompanyFilters);
     }
-    
+
     // ترتيب النتائج
     const sortRadios = document.querySelectorAll('input[name="sortCompanies"]');
     sortRadios.forEach(radio => {
@@ -747,15 +747,15 @@ function clearAllFilters() {
     // مسح حقول الإدخال
     const inputs = document.querySelectorAll('input[type="text"], select');
     inputs.forEach(input => input.value = '');
-    
+
     // مسح الصناديق المحددة
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => checkbox.checked = false);
-    
+
     // مسح المهارات النشطة
     const skillTags = document.querySelectorAll('.skill-tag-filter.active');
     skillTags.forEach(tag => tag.classList.remove('active'));
-    
+
     // إعادة تعيين البيانات المفلترة
     filteredData = [...allMembers];
     displayProfiles(1);
@@ -766,11 +766,11 @@ function clearAllCompanyFilters() {
     // مسح حقول الإدخال
     const inputs = document.querySelectorAll('input[type="text"], select');
     inputs.forEach(input => input.value = '');
-    
+
     // مسح الصناديق المحددة
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => checkbox.checked = false);
-    
+
     // إعادة تعيين البيانات المفلترة
     filteredData = [...allCompanies];
     displayCompanies(1);
@@ -780,16 +780,16 @@ function clearAllCompanyFilters() {
 function updatePagination(containerId, totalItems, currentPage, displayFunction) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    
+
     const totalPages = Math.ceil(totalItems / CONFIG.itemsPerPage);
-    
+
     if (totalPages <= 1) {
         container.innerHTML = '';
         return;
     }
-    
+
     let paginationHTML = '';
-    
+
     // السابق
     if (currentPage > 1) {
         paginationHTML += `
@@ -800,7 +800,7 @@ function updatePagination(containerId, totalItems, currentPage, displayFunction)
             </li>
         `;
     }
-    
+
     // أرقام الصفحات
     for (let i = 1; i <= totalPages; i++) {
         if (i === currentPage) {
@@ -817,7 +817,7 @@ function updatePagination(containerId, totalItems, currentPage, displayFunction)
             `;
         }
     }
-    
+
     // التالي
     if (currentPage < totalPages) {
         paginationHTML += `
@@ -828,9 +828,9 @@ function updatePagination(containerId, totalItems, currentPage, displayFunction)
             </li>
         `;
     }
-    
+
     container.innerHTML = paginationHTML;
-    
+
     // إضافة أحداث النقر
     container.querySelectorAll('a.page-link').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -845,7 +845,7 @@ function updatePagination(containerId, totalItems, currentPage, displayFunction)
 function initializeGlobalEvents() {
     // أحداث التمرير للكشف عن العناصر
     window.addEventListener('scroll', handleScroll);
-    
+
     // أحداث النقر على الأزرار
     document.addEventListener('click', function(e) {
         if (e.target.matches('.btn-primary, .btn-warning')) {
@@ -860,7 +860,7 @@ function handleScroll() {
     elements.forEach(element => {
         const elementTop = element.getBoundingClientRect().top;
         const elementVisible = 150;
-        
+
         if (elementTop < window.innerHeight - elementVisible) {
             element.classList.add('visible');
         }
@@ -872,20 +872,20 @@ function generateStars(rating) {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
     let starsHTML = '';
-    
+
     for (let i = 0; i < fullStars; i++) {
         starsHTML += '<i class="fas fa-star"></i>';
     }
-    
+
     if (hasHalfStar) {
         starsHTML += '<i class="fas fa-star-half-alt"></i>';
     }
-    
+
     const emptyStars = 5 - Math.ceil(rating);
     for (let i = 0; i < emptyStars; i++) {
         starsHTML += '<i class="far fa-star"></i>';
     }
-    
+
     return starsHTML;
 }
 
@@ -953,15 +953,15 @@ if (typeof module !== 'undefined' && module.exports) {
     const path = require('path');
     const app = express();
     const PORT = 5000;
-    
+
     // تقديم الملفات الثابتة
     app.use(express.static('.'));
-    
+
     // توجيه جميع الطلبات إلى index.html
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'index.html'));
     });
-    
+
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`نادي التقنيين السوري يعمل على المنفذ ${PORT}`);
     });

@@ -28,7 +28,18 @@
             <div class="row align-items-center gx-2">
                 <div class="col-md-3 text-center">
                     <div class="profile-avatar-large" id="profileAvatar" style="font-size: 1.2rem; height: 80px; width: 80px; line-height: 80px;">
-                        أم
+                     {{-- عرض الصورة القديمة أو صورة افتراضية --}}
+<div id="profileAvatar"
+     style="height: 80px; width: 80px; border-radius: 50%; overflow: hidden; cursor: pointer; border: 1px solid #ccc;">
+    <img id="previewImage"
+         src="{{ $students->image ? asset('storage/' . $students->image) : asset('images/default.png') }}"
+         alt="Profile Image"
+         style="width: 100%; height: 100%; object-fit: cover;">
+</div>
+
+{{-- حقل رفع الصورة (مخفي) --}}
+<input type="file" name="image" id="imageInput" style="display:none;">
+
                     </div>
                 </div>
 
@@ -111,6 +122,8 @@
                     </select>
                 </div>
 
+ <label>السيرة الذاتية (PDF, Word):</label>
+    <input type="file" name="cv" accept=".pdf,.doc,.docx">
 
 
 
@@ -299,5 +312,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
+<script>
+document.getElementById('profileAvatar').addEventListener('click', function() {
+    document.getElementById('imageInput').click();
+});
+</script>
 @endsection

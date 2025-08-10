@@ -4,27 +4,45 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="profile-header-card">
-                        <div class="profile-cover">
-                            <div class="profile-actions">
-                                                     @if(auth()->user()->compan)
+                  <div class="profile-header-card position-relative"> <!-- تأكد من أن هذا العنصر نسبي -->
+
+          <div class="profile-cover">
+
+
+        <!-- زر الجرس في الزاوية العلوية اليسرى -->
+        <button class="btn btn-outline-warning rounded-circle d-flex align-items-center justify-content-center position-absolute"
+                style="top: 10px; right: 10px; width: 42px; height: 42px; z-index: 10;">
+
+            <a href="{{route('messages.inbox')}}"><i class="fas fa-bell"></i></a>
+        </button>
+
+        <!-- الأزرار الأخرى -->
+
+        <div class="profile-actions d-flex flex-wrap gap-2 align-items-center">
+            <div class="d-flex gap-2 ms-auto">
+                                                         @if(auth()->user()->compan)
     <a href="{{ route('companytsjop', ['companies_id' => auth()->user()->compan->id]) }}"
-       class="btn btn-outline-primary">
+     class="btn btn-success btn-sm">
         <i class="fas fa-briefcase me-1"></i> منشورات فرص العمل
     </a>
 @endif
-                                <button class="btn btn-success btn-sm" id="contactBtn">
-                                    <i class="fas fa-envelope me-1"></i>
-                                    تواصل
-                                </button>
-                            </div>
-                        </div>
+
+                <button class="btn btn-success btn-sm">
+                    <i class="fas fa-comments me-1"></i> منشورات المنتدى
+                </button>
+            </div>
+        </div>
+    </div>
 
                         <div class="profile-info">
                             <div class="row align-items-center">
                                 <div class="col-md-3 text-center">
                                     <div class="profile-avatar-large" id="profileAvatar">
-                                        أم
+                                         @if($user->image)
+    <img src="{{ asset('storage/' . $user->image) }}" alt="Profile Image" width="150" >
+@else
+    <p>لا توجد صورة شخصية</p>
+    @endif
                                     </div>
                                 </div>
                                 <div class="col-md-9">
@@ -76,7 +94,7 @@
 
    <span class="meta-item">
                                             <i class="fas fa-project-diagram me-1"></i>
-                                            <span id="profileProjects">45 مشروع</span>
+                                            <span id="profileProjects">{{ $projectsCount }} مشروع</span>
                                         </span>
                                     </div>
 
@@ -253,42 +271,21 @@
 
                         <hr>
 
-                        <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#contactModal">
-                            <i class="fas fa-paper-plane me-2"></i>
-                            إرسال رسالة
-                        </button>
-                        <button class="btn btn-outline-success w-100">
-                            <i class="fas fa-download me-2"></i>
-                            تحميل السيرة الذاتية
-                        </button>
-                    </div>
 
-                    <!-- Stats Card -->
-                    <div class="content-card mb-4">
-                        <h5 class="card-title mb-3">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            إحصائيات الملف
-                        </h5>
-                        <div class="stats-list">
-                            <div class="stat-item d-flex justify-content-between mb-2">
-                                <span>مشاهدات الملف</span>
-                                <strong>234</strong>
-                            </div>
-
-                            </div>
-                            <div class="stat-item d-flex justify-content-between">
-                                <span>معدل الاستجابة</span>
-                                <strong>95%</strong>
-                            </div>
-                        </div>
-                    </div>
-
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit" class="btn btn-danger">
-        <i class="fas fa-sign-out-alt me-1"></i> تسجيل الخروج
+                       @if ($user->cv_path)
+    <a href="{{ asset('storage/' . $user->cv_path) }}" class="btn btn-outline-success w-100" download>
+        <i class="fas fa-download me-2"></i>
+        تحميل السيرة الذاتية
+    </a>
+@else
+    <button class="btn btn-outline-secondary w-100" disabled>
+        لا توجد سيرة ذاتية
     </button>
-</form>
+@endif
+
+                    </div>
+
+
                 </div>
             </div>
         </div>

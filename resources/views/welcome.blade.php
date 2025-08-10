@@ -113,8 +113,40 @@
             </div>
 
             <div class="row" id="featuredExperts">
-                <!-- Featured experts will be loaded here by JavaScript -->
+                <div class="row" id="featuredCompanies">
+    @foreach ($expert as $experts)
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="company-card">
+                <div class="card-body text-center p-4">
+                    <div class="company-logo">
+                        {{-- تقدر تحط صورة شعار الشركة هنا إذا فيه --}}
+                    </div>
+
+                    <h5 class="company-name">{{ $experts->user->first_name }}</h5>
+
+                    <p class="company-industry">
+                        {{-- حط اسم المجال أو الصناعة لو عندك --}}
+                    </p>
+
+                    <p class="company-location">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        {{ $experts->user->Governorate ?? 'غير محدد' }}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+
+                        <a href="{{ route('experts.show', $experts->user->id) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-building me-1"></i>
+                            عرض الشركة
+                        </a>
+                    </div>
+                </div>
             </div>
+        </div>
+    @endforeach
+
+       </div>
 
             <div class="text-center mt-4">
                 <a href="{{route('PersonalFiles')}}" class="btn btn-primary btn-lg">
@@ -236,17 +268,63 @@
                 </div>
             </div>
 
-            <div class="row" id="featuredCompanies">
-                <!-- Featured companies will be loaded here by JavaScript -->
-            </div>
+        <div class="row" id="featuredCompanies">
+    @foreach ($companies as $company)
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="company-card">
+                <div class="card-body text-center p-4">
+                    <div class="company-logo">
+                        {{-- تقدر تحط صورة شعار الشركة هنا إذا فيه --}}
+                    </div>
 
-            <div class="text-center mt-4">
-                <a href="{{route('companies')}}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-building me-2"></i>
-                    عرض دليل الشركات
-                </a>
+                    <h5 class="company-name">{{ $company->Business_sector }}</h5>
+
+                    <p class="company-industry">
+                        {{-- حط اسم المجال أو الصناعة لو عندك --}}
+                    </p>
+
+                    <p class="company-location">
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        {{ $company->user->Governorate ?? 'غير محدد' }}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-users me-1"></i>
+                            @if($company->Company_Size == 'startup')
+                                1-10 موظفين
+                            @elseif($company->Company_Size == 'small')
+                                11-50 موظف
+                            @elseif($company->Company_Size == 'medium')
+                                51-200 موظف
+                            @elseif($company->Company_Size == 'large')
+                                أكثر من 200 موظف
+                            @else
+                                غير محدد
+                            @endif
+                        </small>
+
+                        <a href="{{ route('companyprofile.show', $company->id) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-building me-1"></i>
+                            عرض الشركة
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+    @endforeach
+
+    <div class="text-center mt-4">
+        <a href="{{ route('companies') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-building me-2"></i>
+            عرض دليل الشركات
+        </a>
+    </div>
+</div>
+
+
+
+
     </section>
 
     <!-- Call to Action -->
@@ -259,11 +337,11 @@
                         كن جزءاً من أكبر شبكة للمحترفين التقنيين في سوريا
                     </p>
                     <div class="d-flex flex-wrap justify-content-center gap-3">
-                        <a href="register.html" class="btn btn-success btn-lg">
+                        <a href="{{route('register')}}" class="btn btn-success btn-lg">
                             <i class="fas fa-user-plus me-2"></i>
                             سجل كخبير
                         </a>
-                        <a href="register.html" class="btn btn-outline-light btn-lg">
+                        <a href="{{route('register')}}" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-building me-2"></i>
                             سجل شركتك
                         </a>

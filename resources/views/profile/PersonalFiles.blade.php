@@ -11,54 +11,7 @@
             </div>
         </div>
     </section>
-      <!-- Search and Filter Section -->
-    <section class="search-filter-section py-4 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="search-container bg-white rounded p-3 mb-3">
-                        <div class="row g-2 align-items-center">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="ابحث عن خبير..." id="profileSearch">
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-select" id="specialtyFilter">
-                                    <option value="">جميع التخصصات</option>
-                                    <option value="web-development">تطوير الويب</option>
-                                    <option value="mobile-development">تطوير التطبيقات</option>
-                                    <option value="ui-ux-design">تصميم UI/UX</option>
-                                    <option value="data-science">علوم البيانات</option>
-                                    <option value="cybersecurity">الأمن السيبراني</option>
-                                    <option value="cloud-computing">الحوسبة السحابية</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-primary w-100" type="button" id="searchBtn">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-4">
-                    <div class="filter-options bg-white rounded p-3">
-                        <h6 class="mb-3">ترتيب حسب:</h6>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="sortBy" id="sortNewest" value="newest" checked>
-                            <label class="btn btn-outline-primary" for="sortNewest">الأحدث</label>
-
-                            <input type="radio" class="btn-check" name="sortBy" id="sortExperience" value="experience">
-                            <label class="btn btn-outline-primary" for="sortExperience">الخبرة</label>
-
-                            <input type="radio" class="btn-check" name="sortBy" id="sortRating" value="rating">
-                            <label class="btn btn-outline-primary" for="sortRating">التقييم</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
      <!-- Profiles Section -->
     <section class="profiles-section py-5">
         <div class="container">
@@ -69,53 +22,99 @@
                         <h5 class="mb-4">تصفية النتائج</h5>
 
                         <!-- Experience Level -->
+                           <form method="GET" action="{{ route('PersonalFiles') }}">
+
                         <div class="filter-group mb-4">
                             <h6 class="filter-title">مستوى الخبرة</h6>
+                               @php
+    $selectedSizes = (array) request()->get('years_of_experience');
+@endphp
+
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="junior" id="juniorCheck">
+                                <input class="form-check-input" type="checkbox" value="junior" id="juniorCheck"name="years_of_experience[]"
+        {{ in_array('junior', $selectedSizes) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="juniorCheck">مبتدئ (1-3 سنوات)</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="mid" id="midCheck">
+                                <input class="form-check-input" type="checkbox" value="mid" id="midCheck"name="years_of_experience[]"
+        {{ in_array('mid', $selectedSizes) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="midCheck">متوسط (3-7 سنوات)</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="senior" id="seniorCheck">
+                                <input class="form-check-input" type="checkbox" value="senior" id="seniorCheck"name="years_of_experience[]"
+        {{ in_array('senior', $selectedSizes) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="seniorCheck">خبير (+7 سنوات)</label>
-                            </div>
+
+               <button type="submit" class="btn btn-primary mt-3">تصفية</button>
+
+                        </div>
+</form>
+
+
                         </div>
 
                         <!-- Location -->
-                        <div class="filter-group mb-4">
-                            <h6 class="filter-title">المحافظة</h6>
-                            <select class="form-select" id="locationFilter">
-                                <option value="">جميع المحافظات</option>
-                                <option value="damascus">دمشق</option>
-                                <option value="aleppo">حلب</option>
-                                <option value="homs">حمص</option>
-                                <option value="lattakia">اللاذقية</option>
-                                <option value="tartous">طرطوس</option>
-                            </select>
-                        </div>
+                                          <form method="GET" action="{{ route('PersonalFiles') }}">
+    <div class="filter-group mb-4">
+        <h6 class="filter-title">المحافظة</h6>
+
+        @php
+            $governorates = [
+                'damascus' => 'دمشق',
+                'aleppo' => 'حلب',
+                'homs' => 'حمص',
+                'hama' => 'حماة',
+                'lattakia' => 'اللاذقية',
+                'tartous' => 'طرطوس',
+                'deir-ez-zor' => 'دير الزور',
+                'raqqa' => 'الرقة',
+                'hasakah' => 'الحسكة',
+                'idleb' => 'إدلب',
+                'deraa' => 'درعا',
+                'sweida' => 'السويداء',
+                'quneitra' => 'القنيطرة',
+                'damascus-countryside' => 'ريف دمشق',
+            ];
+            $selectedGovernorate = request()->get('Governorate');
+        @endphp
+
+        <select class="form-control" name="Governorate">
+            <option value="">-- اختر المحافظة --</option>
+            @foreach ($governorates as $value => $label)
+                <option value="{{ $value }}" {{ $selectedGovernorate === $value ? 'selected' : '' }}>
+                    {{ $label }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="submit" class="btn btn-primary mt-3">تصفية</button>
+    </div>
+</form>
+
 
                         <!-- Skills -->
-                        <div class="filter-group mb-4">
-                            <h6 class="filter-title">المهارات التقنية</h6>
-                            <div class="skills-filter">
-                                <span class="skill-tag-filter" data-skill="javascript">JavaScript</span>
-                                <span class="skill-tag-filter" data-skill="python">Python</span>
-                                <span class="skill-tag-filter" data-skill="react">React</span>
-                                <span class="skill-tag-filter" data-skill="vue">Vue.js</span>
-                                <span class="skill-tag-filter" data-skill="php">PHP</span>
-                                <span class="skill-tag-filter" data-skill="laravel">Laravel</span>
-                                <span class="skill-tag-filter" data-skill="flutter">Flutter</span>
-                                <span class="skill-tag-filter" data-skill="figma">Figma</span>
-                            </div>
-                        </div>
+                      <div class="filter-group mb-4">
+    <h6 class="filter-title">المهارات التقنية</h6>
+    <div class="skills-filter">
+        <a href="{{ route('PersonalFiles', ['skill' => 'JavaScript']) }}" class="skill-tag-filter" data-skill="JavaScript">JavaScript</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'python']) }}" class="skill-tag-filter" data-skill="python">Python</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'react']) }}" class="skill-tag-filter" data-skill="react">React</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'vue']) }}" class="skill-tag-filter" data-skill="vue">Vue.js</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'php']) }}" class="skill-tag-filter" data-skill="php">PHP</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'laravel']) }}" class="skill-tag-filter" data-skill="laravel">Laravel</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'flutter']) }}" class="skill-tag-filter" data-skill="flutter">Flutter</a>
+        <a href="{{ route('PersonalFiles', ['skill' => 'figma']) }}" class="skill-tag-filter" data-skill="figma">Figma</a>
+    </div>
+</div>
 
-                        <button class="btn btn-outline-secondary w-100" id="clearFilters">
+
+                         <button class="btn btn-outline-secondary w-100" id="clearJobFilters">
                             <i class="fas fa-undo me-2"></i>
-                            مسح الفلاتر
+                          <a href="{{ route('PersonalFiles') }}" class="btn btn-outline-secondary w-100">
+
+    مسح الفلاتر
+</a>
+
                         </button>
                     </div>
                 </div>
@@ -148,7 +147,11 @@
                         <div class="profile-card">
     <div class="profile-header text-center">
       <div class="profile-avatar mb-2">
-        <img src="avatar.jpg" alt="صورة الخبير" />
+          @if($PersonalFiles->image)
+    <img src="{{ asset('storage/' . $PersonalFiles->image) }}" alt="Profile Image" width="150" >
+@else
+    <p>لا توجد صورة شخصية</p>
+    @endif
       </div>
       <h5 class="mb-1">{{$PersonalFiles->first_name}}</h5>
       <p class="mb-0 text-muted">{{$PersonalFiles->expert->job_title_en}}</p>
@@ -159,8 +162,31 @@
           <i class="fas fa-map-marker-alt me-1"></i> {{$PersonalFiles->Governorate}}
         </span>
         <div class="rating">
-          ⭐⭐⭐⭐☆
-          <small class="ms-1">4.0</small>
+        @php
+            $averageRating = $PersonalFiles->averageRating;
+            $ratingsCount =$PersonalFiles->ratingsCount;
+
+            $fullStars = floor($averageRating);
+            $halfStar = ($averageRating - $fullStars) >= 0.5;
+            $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+        @endphp
+        <div class="rating-display">
+            <span class="average-rating">{{ number_format($averageRating, 1) }}</span>
+
+            @for ($i = 0; $i < $fullStars; $i++)
+                <i class="fas fa-star" style="color: gold;"></i>
+            @endfor
+
+            @if ($halfStar)
+                <i class="fas fa-star-half-alt" style="color: gold;"></i>
+            @endif
+
+            @for ($i = 0; $i < $emptyStars; $i++)
+                <i class="far fa-star" style="color: gold;"></i>
+            @endfor
+
+                 </div>
+
         </div>
       </div>
 

@@ -7,14 +7,9 @@
                     <div class="profile-header-card">
                         <div class="profile-cover">
                             <div class="profile-actions">
-                                <button class="btn btn-outline-light btn-sm me-2" id="shareProfileBtn">
-                                    <i class="fas fa-share me-1"></i>
-                                    مشاركة
-                                </button>
-                                <button class="btn btn-success btn-sm" id="contactBtn">
-                                    <i class="fas fa-envelope me-1"></i>
-                                    تواصل
-                                </button>
+                               <button class="btn btn-success btn-sm">
+                    <i class="fas fa-comments me-1"></i> منشورات المنتدى
+                </button>
                             </div>
                         </div>
 
@@ -22,7 +17,12 @@
                             <div class="row align-items-center">
                                 <div class="col-md-3 text-center">
                                     <div class="profile-avatar-large" id="profileAvatar">
-                                        أم
+                                     @if($user->image)
+    <img src="{{ asset('storage/' . $user->image) }}" alt="Profile Image" width="150" >
+@else
+    <p>لا توجد صورة شخصية</p>
+    @endif
+
                                     </div>
                                 </div>
                                 <div class="col-md-9">
@@ -72,30 +72,19 @@
                                         </span>
                                         <span class="meta-item">
                                             <i class="fas fa-project-diagram me-1"></i>
-                                            <span id="profileProjects">45 مشروع</span>
+                                            <span id="profileProjects">{{ $projectsCount }} مشروع</span>
                                         </span>
                                     </div>
 
-                                    <div class="profile-rating mb-3">
-                                        <div class="rating" id="profileRating">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <span class="ms-2">4.8 (23 تقييم)</span>
-                                        </div>
-                                    </div>
+
 
                                     <div class="profile-availability">
-                                        {{-- <span class="badge bg-success">@if ($user->expert->availability == true)
-                                            متاح للعمل
-                                       @else
-                                       غير متاح للعمل
-                                            @endif</span> --}}
+
                                     </div>
-                                <a href="{{route('editeB')}}">    <button type="submit" class="btn btn-success w-100">تعديل</button>
+    <a href="{{ route('editeB') }}" class="btn btn-success w-100 d-block text-center text-decoration-none">
+    تعديل
 </a>
+
                                 </div>
                             </div>
                         </div>
@@ -266,42 +255,24 @@
 
                         <hr>
 
-                        <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#contactModal">
-                            <i class="fas fa-paper-plane me-2"></i>
-                            إرسال رسالة
-                        </button>
-                        <button class="btn btn-outline-success w-100">
-                            <i class="fas fa-download me-2"></i>
-                            تحميل السيرة الذاتية
-                        </button>
-                    </div>
 
-                    <!-- Stats Card -->
-                    <div class="content-card mb-4">
-                        <h5 class="card-title mb-3">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            إحصائيات الملف
-                        </h5>
-                        <div class="stats-list">
-                            <div class="stat-item d-flex justify-content-between mb-2">
-                                <span>مشاهدات الملف</span>
-                                <strong>234</strong>
-                            </div>
-
-                            </div>
-                            <div class="stat-item d-flex justify-content-between">
-                                <span>معدل الاستجابة</span>
-                                <strong>95%</strong>
-                            </div>
-                        </div>
-                    </div>
-
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit" class="btn btn-danger">
-        <i class="fas fa-sign-out-alt me-1"></i> تسجيل الخروج
+                        @if ($user->cv_path)
+    <a href="{{ asset('storage/' . $user->cv_path) }}" class="btn btn-outline-success w-100" download>
+        <i class="fas fa-download me-2"></i>
+        تحميل السيرة الذاتية
+    </a>
+@else
+    <button class="btn btn-outline-secondary w-100" disabled>
+        لا توجد سيرة ذاتية
     </button>
-</form>
+@endif
+
+                    </div>
+
+
+                    </div>
+
+
                 </div>
             </div>
         </div>

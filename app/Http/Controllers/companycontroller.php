@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\RatedPerson;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -14,12 +15,41 @@ class companycontroller extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $company=Company::all();
+   public function index(Request $request)
+{
+    $query = User::where('type', 'company')->with('compan.projects');
 
-       return view('profile.company',['company'=>$company]);
+    if ($request->has('Company_Size')) {
+        $levels = (array) $request->input('Company_Size');
+        $query->whereIn('Company_Size', $levels); // اسم العمود كما هو عندك
     }
+     if ($request->has('CompanyServices')) {
+        $levels = (array) $request->input('CompanyServices');
+        $query->whereIn('CompanyServices', $levels); // اسم العمود كما هو عندك
+    }
+ if ($request->filled('Governorate')) {
+        $validated = $request->validate([
+            'Governorate' => [
+                'required',
+                Rule::in([
+                    'damascus', 'aleppo', 'deir-ez-zor', 'homs', 'lattakia', 'tartous',
+                    'deraa', 'sweida', 'quneitra', 'idleb', 'hama', 'raqqa', 'hasakah', 'damascus-countryside'
+                ]),
+            ]
+        ]);
+$governorate = $request->input('Governorate');
+
+        // هنا السحر: نفلتر الشركات حسب علاقة المستخدم ومحافظته
+        $query->whereHas('user', function ($q) use ($governorate) {
+            $q->where('Governorate', $governorate);
+        });
+    }
+
+    $companies = $query->paginate(10);
+
+    return view('profile.company', ['company' => $companies]);
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -34,23 +64,83 @@ class companycontroller extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'rated_id' => 'required|integer',
+            'rated_type' => 'required|in:App\Models\Expert,App\Models\Company',
+            'rating_value' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string',
+        ]);
+
+        // منع التكرار
+        $exists = RatedPerson::where([
+            'rater_id' => Auth::id(),
+            'rated_id' => $request->rated_id,
+            'rated_type' => $request->rated_type,
+        ])->exists();
+
+        if ($exists) {
+            return back()->with('error', 'لقد قمت بتقييم هذا الشخص من قبل.');
+        }
+
+        RatedPerson::create([
+            'rater_id' => Auth::id(),
+            'rated_id' => $request->rated_id,
+            'rated_type' => $request->rated_type,
+            'rating_value' => $request->rating_value,
+            'comment' => $request->comment,
+        ]);
+
+        return back()->with('success', 'تم إرسال التقييم بنجاح.');
     }
 
     /**
      * Display the specified resource.
      */
-         public function showcompan(string $id)
+   public function showByCompany($id)
 {
-    $user = User::with('compan')->findOrFail($id);
 
-    return view('compan', compact('user'));
+    $company = company::with('user')->findOrFail($id);
+     $averageRating = 0;
+    $ratingsCount = 0;
+
+$projectsCount = 0;
+    if ($company) {
+        $projectsCount = $company->projects->count(); // projects هنا مجموعة (Collection)
+    }
+    if ($company->user) {
+        $averageRating = RatedPerson::where('rated_type', 'App\Models\Company')
+            ->where('rated_id', $company->user->id)
+            ->avg('rating_value') ?? 0;
+
+        $ratingsCount = RatedPerson::where('rated_type', 'App\Models\Company')
+            ->where('rated_id', $company->user->id)
+            ->count();
+    }
+    return view('compan', compact('company','averageRating', 'ratingsCount','projectsCount'));
 }
-     public function show(string $id)
+
+
+   public function show(string $id)
 {
     $user = User::with('compan')->findOrFail($id);
 
-    return view('profile.partials.company', compact('user'));
+    $averageRating = 0;
+    $ratingsCount = 0;
+
+    if ($user->compan) {
+        $averageRating = RatedPerson::where('rated_type', 'App\Models\compan')
+            ->where('rated_id', $user->compan->id)
+            ->avg('rating_value') ?? 0;
+
+        $ratingsCount = RatedPerson::where('rated_type', 'App\Models\compan')
+            ->where('rated_id', $user->compan->id)
+            ->count();
+    }
+$projectsCount = 0;
+    if ($user->compan) {
+        $projectsCount = $user->compan->projects->count(); // projects هنا مجموعة (Collection)
+    }
+    return view('profile.partials.company', compact('user', 'averageRating', 'ratingsCount','projectsCount'));
 }
 
     /**
@@ -99,7 +189,17 @@ public function update(Request $request)
         'skills.*.name' => 'required|string|max:255',
         'skills.*.level' => 'required|integer|min:0|max:100',
         'skills.*.category' => 'nullable|string|max:255',
+          'image' => 'sometimes|nullable|image|mimes:jpg,jpeg,png|max:2048',
+           'cv' => 'sometimes|nullable|file|mimes:pdf,doc,docx|max:5120', // 5 ميجابايت مثلا
     ]);
+if ($request->hasFile('image')) {
+    $path = $request->file('image')->store('image', 'public');
+    $validatedUserData['image'] = $path;
+}
+ if ($request->hasFile('cv')) {
+        $cvPath = $request->file('cv')->store('cvs', 'public');
+        $validatedUserData['cv_path'] = $cvPath;
+    }
 
     $validatedCompanyData = $request->validate([
         'Company_Name' => 'sometimes|nullable|string|max:255',

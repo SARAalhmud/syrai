@@ -18,9 +18,11 @@ class company extends Model
     'CompanyServices' => 'array',
 
 ];
-public function user(){
+public function user()
+{
     return $this->belongsTo(User::class);
 }
+
 public function projects()
 {
     return $this->hasMany(project::class, 'companies_id');
@@ -29,4 +31,15 @@ public function jops()
 {
     return $this->hasMany(jop::class, 'companies_id');
 }
+  public function masej()
+{
+    return $this->hasMany(masej::class, 'companies_id');
+}
+
+
+public function ratingsReceived()
+{
+    return $this->hasMany(RatedPerson::class, 'companies_id');
+}
+
 }

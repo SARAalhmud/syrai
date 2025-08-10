@@ -20,8 +20,8 @@ class Beginner
             return $next($request);
         }
 
-        // يمكن توجيه غير المبتدئ إلى صفحة أخرى مثلاً:
-        return redirect('/'); // أو لأي صفحة مناسبة
+
+        return redirect('/');
 
     }
 }

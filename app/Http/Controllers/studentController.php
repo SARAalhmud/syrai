@@ -51,8 +51,11 @@ class studentController extends Controller
      public function show(string $id)
 {
     $user = User::with('student')->findOrFail($id);
-
-    return view('profile.student', compact('user'));
+$projectsCount = 0;
+    if ($user->student) {
+        $projectsCount = $user->student->projects->count(); // projects هنا مجموعة (Collection)
+    }
+    return view('profile.student', compact('user','projectsCount'));
 }
     /**
      * Show the form for editing the specified resource.
@@ -119,7 +122,17 @@ class studentController extends Controller
         'skills.*.name' => 'required|string|max:255',
         'skills.*.level' => 'required|integer|min:0|max:100',
         'skills.*.category' => 'nullable|string|max:255',
+  'image' => 'sometimes|nullable|image|mimes:jpg,jpeg,png|max:2048',
+   'cv' => 'sometimes|nullable|file|mimes:pdf,doc,docx|max:5120', // 5 ميجابايت مثلا
     ]);
+if ($request->hasFile('image')) {
+    $path = $request->file('image')->store('image', 'public');
+    $validatedUserData['image'] = $path;
+}
+ if ($request->hasFile('cv')) {
+        $cvPath = $request->file('cv')->store('cvs', 'public');
+        $validatedUserData['cv_path'] = $cvPath;
+    }
 
     // تحديث بيانات المستخدم
     $user->update($validatedUserData);

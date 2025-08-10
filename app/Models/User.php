@@ -26,7 +26,9 @@ class User extends Authenticatable
         'Phone_Number',
         'type',
         'social_links',
-         'skills'
+         'skills',
+         'image',
+         'cv_path'
     ];
 
     protected $casts = [
@@ -64,10 +66,13 @@ public function expert(){
 public function beginner(){
     return $this->hasOne(beginner::class);
 }
-public function  compan(){
-    return $this->hasOne(company::class);
+public function compan()
+{
+    return $this->hasOne(Company::class, 'user_id');  // تأكد إن اسم العمود هو user_id
 }
+
 public function  student(){
     return $this->hasOne(student::class);
 }
+
 }

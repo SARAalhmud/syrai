@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
               $table->id();
+$table->string('cv_path')->nullable();
 
            $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
@@ -28,7 +29,7 @@ return new class extends Migration
             $table->string('Governorate') ;
              $table->json('social_links')->nullable();
              $table->json('skills')->nullable();
-
+     $table->string('image')->nullable();
        });
     }
 

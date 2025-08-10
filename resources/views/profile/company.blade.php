@@ -13,53 +13,6 @@
         </div>
     </section>
      <!-- Search and Filter Section -->
-    <section class="search-filter-section py-4 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="search-container bg-white rounded p-3 mb-3">
-                        <div class="row g-2 align-items-center">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="ابحث عن شركة..." id="companySearch">
-                            </div>
-                            <div class="col-md-4">
-                                <select class="form-select" id="industryFilter">
-                                    <option value="">جميع القطاعات</option>
-                                    <option value="software-development">تطوير البرمجيات</option>
-                                    <option value="web-design">تصميم المواقع</option>
-                                    <option value="mobile-apps">تطبيقات الجوال</option>
-                                    <option value="digital-marketing">التسويق الرقمي</option>
-                                    <option value="it-consulting">استشارات تقنية</option>
-                                    <option value="cybersecurity">الأمن السيبراني</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-primary w-100" type="button" id="searchCompanyBtn">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="filter-options bg-white rounded p-3">
-                        <h6 class="mb-3">ترتيب حسب:</h6>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="sortCompanies" id="sortAlphabetical" value="alphabetical" checked>
-                            <label class="btn btn-outline-primary" for="sortAlphabetical">الاسم</label>
-
-                            <input type="radio" class="btn-check" name="sortCompanies" id="sortSize" value="size">
-                            <label class="btn btn-outline-primary" for="sortSize">الحجم</label>
-
-                            <input type="radio" class="btn-check" name="sortCompanies" id="sortRating" value="rating">
-                            <label class="btn btn-outline-primary" for="sortRating">التقييم</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Companies Section -->
     <section class="companies-section py-5">
@@ -71,65 +24,128 @@
                         <h5 class="mb-4">تصفية النتائج</h5>
 
                         <!-- Company Size -->
+                        <form method="GET" action="{{ route('companies') }}">
                         <div class="filter-group mb-4">
                             <h6 class="filter-title">حجم الشركة</h6>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="startup" id="startupCheck">
-                                <label class="form-check-label" for="startupCheck">ناشئة (1-10 موظفين)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="small" id="smallCheck">
-                                <label class="form-check-label" for="smallCheck">صغيرة (11-50 موظف)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="medium" id="mediumCheck">
-                                <label class="form-check-label" for="mediumCheck">متوسطة (51-200 موظف)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="large" id="largeCheck">
-                                <label class="form-check-label" for="largeCheck">كبيرة (+200 موظف)</label>
-                            </div>
-                        </div>
+                           @php
+    $selectedSizes = (array) request()->get('Company_Size');
+@endphp
 
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="small" id="smallCheck" name="Company_Size[]"
+        {{ in_array('small', $selectedSizes) ? 'checked' : '' }}>
+    <label class="form-check-label" for="smallCheck">صغيرة (11-50 موظف)</label>
+</div>
+
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="medium" id="mediumCheck" name="Company_Size[]"
+        {{ in_array('medium', $selectedSizes) ? 'checked' : '' }}>
+    <label class="form-check-label" for="mediumCheck">متوسطة (51-200 موظف)</label>
+</div>
+
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="large" id="largeCheck" name="Company_Size[]"
+        {{ in_array('large', $selectedSizes) ? 'checked' : '' }}>
+    <label class="form-check-label" for="largeCheck">كبيرة (+200 موظف)</label>
+</div>
+
+
+               <button type="submit" class="btn btn-primary mt-3">تصفية</button>
+
+                        </div>
+</form>
                         <!-- Location -->
-                        <div class="filter-group mb-4">
-                            <h6 class="filter-title">المحافظة</h6>
-                            <select class="form-select" id="companyLocationFilter">
-                                <option value="">جميع المحافظات</option>
-                                <option value="damascus">دمشق</option>
-                                <option value="aleppo">حلب</option>
-                                <option value="homs">حمص</option>
-                                <option value="lattakia">اللاذقية</option>
-                                <option value="tartous">طرطوس</option>
-                            </select>
-                        </div>
+                      <form method="GET" action="{{ route('companies') }}">
+    <div class="filter-group mb-4">
+        <h6 class="filter-title">المحافظة</h6>
 
-                        <!-- Services -->
-                        <div class="filter-group mb-4">
+        @php
+            $governorates = [
+                'damascus' => 'دمشق',
+                'aleppo' => 'حلب',
+                'homs' => 'حمص',
+                'hama' => 'حماة',
+                'lattakia' => 'اللاذقية',
+                'tartous' => 'طرطوس',
+                'deir-ez-zor' => 'دير الزور',
+                'raqqa' => 'الرقة',
+                'hasakah' => 'الحسكة',
+                'idleb' => 'إدلب',
+                'deraa' => 'درعا',
+                'sweida' => 'السويداء',
+                'quneitra' => 'القنيطرة',
+                'damascus-countryside' => 'ريف دمشق',
+            ];
+            $selectedGovernorate = request()->get('Governorate');
+        @endphp
+
+        <select class="form-control" name="Governorate">
+            <option value="">-- اختر المحافظة --</option>
+            @foreach ($governorates as $value => $label)
+                <option value="{{ $value }}" {{ $selectedGovernorate === $value ? 'selected' : '' }}>
+                    {{ $label }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="submit" class="btn btn-primary mt-3">تصفية</button>
+    </div>
+</form>
+
+               <div class="filter-group mb-4">
                             <h6 class="filter-title">الخدمات المقدمة</h6>
+                          <form method="GET" action="{{ route('companies') }}">
+
                             <div class="services-filter">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="web-development" id="webDevService">
-                                    <label class="form-check-label" for="webDevService">تطوير الويب</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="mobile-development" id="mobileDevService">
-                                    <label class="form-check-label" for="mobileDevService">تطوير التطبيقات</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="ui-ux-design" id="designService">
-                                    <label class="form-check-label" for="designService">تصميم UI/UX</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="digital-marketing" id="marketingService">
-                                    <label class="form-check-label" for="marketingService">التسويق الرقمي</label>
-                                </div>
+
+                           @php
+    $selectedSizes = (array) request()->get('CompanyServices');
+@endphp
+
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="webDevService" id="webDevService" name="CompanyServices[]"
+        {{ in_array('webDevService', $selectedSizes) ? 'checked' : '' }}>
+  <label class="form-check-label" for="webDevService">تطوير الويب</label>
+
+</div>
+
+<div class="form-check">
+      <input class="form-check-input" type="checkbox" value="ui-ux-design" id="designService"name="CompanyServices[]"
+                            {{ in_array('mobileDevService', $selectedSizes) ? 'checked' : '' }}>
+      <label class="form-check-label" for="mobileDevService">تطوير التطبيقات</label>
+                       </div>
+
+
+<div class="form-check">
+      <input class="form-check-input" type="checkbox" value="designService" id="designService"name="CompanyServices[]"
+                            {{ in_array('designService', $selectedSizes) ? 'checked' : '' }}>
+        <label class="form-check-label" for="designService">تصميم UI/UX</label>
+                                             </div>
+<div class="form-check">
+     <input class="form-check-input" type="checkbox" value="digital-marketing" id="marketingService" name="CompanyServices[]"
+                                                  {{ in_array('designService', $selectedSizes) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="marketingService">التسويق الرقمي</label>
+
+                                                </div>
+
+
+               <button type="submit" class="btn btn-primary mt-3">تصفية</button>
+
+                        </div>
+</form>
+                        <!-- Services -->
+
                             </div>
                         </div>
 
-                        <button class="btn btn-outline-secondary w-100" id="clearCompanyFilters">
+                        <button class="btn btn-outline-secondary w-100" id="clearJobFilters">
                             <i class="fas fa-undo me-2"></i>
-                            مسح الفلاتر
+                          <a href="{{ route('companies') }}" class="btn btn-outline-secondary w-100">
+
+    مسح الفلاتر
+</a>
+
                         </button>
                     </div>
                 </div>
@@ -161,8 +177,11 @@
         <div class="profile-header text-center">
             <div class="profile-avatar mb-3">
                 <!-- شعار الشركة -->
-                <img src="logo.png" alt="Logo" class="img-fluid" style="max-height: 80px;">
-            </div>
+                  @if($company->image)
+    <img src="{{ asset('storage/' . $company->image) }}" alt="Profile Image" width="150" >
+@else
+    <p>لا توجد صورة شخصية</p>
+    @endif   </div>
             <h5 class="mb-1"> مجال الشركة</h5>
             <p class="mb-0 opacity-75"> {{$company->Business_sector}} </p>
         </div>
@@ -170,10 +189,39 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">
                     <i class="fas fa-map-marker-alt me-1"></i>
-                  {{$company->user->Governorate}}
+                  {{$company->Governorate}}
                 </span>
                 <div class="rating">
-                    ★★★★☆ <small class="ms-1">4.5</small>
+
+
+
+    @php
+        $averageRating = $company->average_rating; // هذي attribute محسوبة
+        $ratingsCount = $company->ratings_count;
+        $fullStars = floor($averageRating);
+        $halfStar = ($averageRating - $fullStars) >= 0.5;
+        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+    @endphp
+
+    <div class="rating-display">
+        <span class="average-rating">{{ number_format($averageRating, 1) }}</span>
+
+        @for ($i = 0; $i < $fullStars; $i++)
+            <i class="fas fa-star" style="color: gold;"></i>
+        @endfor
+
+        @if ($halfStar)
+            <i class="fas fa-star-half-alt" style="color: gold;"></i>
+        @endif
+
+        @for ($i = 0; $i < $emptyStars; $i++)
+            <i class="far fa-star" style="color: gold;"></i>
+        @endfor
+
+        <span class="ms-2">({{ $ratingsCount }} تقييم)</span>
+    </div>
+
+
                 </div>
             </div>
 
@@ -208,7 +256,7 @@
 
     @endif
                 </small>
-                  <a href="{{ route('showcompan.show', $company->id) }}" class="btn btn-primary btn-sm">
+                  <a href="{{ route('companyprofile.show', $company->compan->id  ) }}" class="btn btn-primary btn-sm">
     <i class="fas fa-building me-1"></i>
     عرض الشركة
 </a>
@@ -242,8 +290,11 @@
                         انضم إلى دليل الشركات التقنية الرائدة في سوريا
                     </p>
                     <button class="btn btn-warning btn-lg">
+                    <a href="{{route('register')}}" class="btn  ">
+
                         <i class="fas fa-building me-2"></i>
                         سجل شركتك الآن
+                        </a>
                     </button>
                 </div>
             </div>

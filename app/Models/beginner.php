@@ -20,5 +20,15 @@ class beginner extends Model
 {
     return $this->hasMany(project::class, 'beginners_id');
 }
+  public function masej()
+{
+    return $this->hasMany(masej::class, 'beginners_id');
+}
+
+
+public function ratingsReceived()
+{
+    return $this->hasMany(RatedPerson::class, 'beginners_id');
+}
 
 }
